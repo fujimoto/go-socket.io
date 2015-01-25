@@ -32,6 +32,9 @@ type Socket interface {
 
 	// BroadcastTo broadcasts the message to the room with given args.
 	BroadcastTo(room, message string, args ...interface{}) error
+
+	// Close closes the current connection
+	Close() error
 }
 
 type socket struct {
@@ -65,6 +68,10 @@ func (s *socket) Emit(message string, args ...interface{}) error {
 		s.conn.Close()
 	}
 	return nil
+}
+
+func (s *socket) Close() error {
+	return s.conn.Close()
 }
 
 func (s *socket) send(args []interface{}) error {
