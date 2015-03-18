@@ -105,13 +105,17 @@ func (s *socket) sendId(args []interface{}) (int, error) {
 }
 
 func (s *socket) loop() error {
+	disconnected := false
+
 	defer func() {
 		s.LeaveAll()
-		p := packet{
-			Type: _DISCONNECT,
-			Id:   -1,
+		if disconnected == false {
+			p := packet{
+				Type: _DISCONNECT,
+				Id:   -1,
+			}
+			s.socketHandler.onPacket(nil, &p)
 		}
-		s.socketHandler.onPacket(nil, &p)
 	}()
 
 	p := packet{
@@ -152,6 +156,7 @@ func (s *socket) loop() error {
 				}
 			}
 		case _DISCONNECT:
+			disconnected = true
 			return nil
 		}
 	}
