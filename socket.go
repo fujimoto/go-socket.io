@@ -133,6 +133,9 @@ func (s *socket) loop() error {
 		if err := decoder.Decode(&p); err != nil {
 			return err
 		}
+		if p.Type == _DISCONNECT {
+			disconnected = true
+		}
 		ret, err := s.socketHandler.onPacket(decoder, &p)
 		if err != nil {
 			return err
@@ -156,7 +159,6 @@ func (s *socket) loop() error {
 				}
 			}
 		case _DISCONNECT:
-			disconnected = true
 			return nil
 		}
 	}
